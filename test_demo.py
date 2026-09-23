@@ -18,7 +18,7 @@ else:
 
 
 def test_somme():
-    assert somme(5, 6) == 12
+    assert somme(5, 6) == 11
     assert somme(-5, 5) == 0
     assert somme(0, 8) == 8
 
