@@ -24,6 +24,14 @@ def test_somme():
     assert somme(-5, 5) == 0
     assert somme(0, 8) == 8
 
+@pytest.mark.parametrize("a, b, expected", [
+    (5, 6, 11),
+    (-5, 5, 0),
+    (0, 8, 8)
+], ids=["cas_normal", "cas_zero", "cas_zero_2"])
+def test_somme_param(a, b, expected):
+    assert somme(a, b) == expected
+
 def test_somme_aaa():
     a = 5
     b = 7
