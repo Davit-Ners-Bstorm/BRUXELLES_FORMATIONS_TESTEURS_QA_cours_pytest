@@ -1,3 +1,5 @@
+from unittest.mock import Mock
+
 import pytest
 
 def somme(a, b):
@@ -78,3 +80,35 @@ def test_pif_str():
 
 def test_user_age(user):
     assert user["age"] == 254
+
+def create_user(name, email_service):
+    # ......... Creation User .........
+    status = email_service.send(name)
+    for i in range(5):
+        email_service.salsa()
+    return status["ok"]
+
+def test_create_email_sent():
+    mock_email_service = Mock()
+    mock_email_service.send.return_value = {"ok": True}
+
+    result = create_user("Maxime", mock_email_service)
+
+    assert result is True
+
+    mock_email_service.send.assert_called_once()
+    mock_email_service.send.assert_called_once_with("Maxime")
+
+    assert mock_email_service.salsa.call_count == 5
+
+def payment(pay_service, result):
+    if result:
+        pay_service.pay_pas_error()
+    else:
+        pay_service.pay_error()
+
+def test_pay():
+    mock_pay = Mock()
+    mock_pay.pay_error.side_effect = ConnectionError("Payment refusé, erreur de connexion")
+    with pytest.raises(ConnectionError):
+        payment(mock_pay, False)
