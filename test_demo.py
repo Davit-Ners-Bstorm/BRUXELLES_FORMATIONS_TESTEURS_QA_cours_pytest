@@ -72,3 +72,9 @@ def function_au_pif(value):
 def test_pif_str():
     with pytest.raises(ValueError, match=ERROR_WHILE_STRING):
         function_au_pif(True)
+
+
+
+
+def test_user_age(user):
+    assert user["age"] == 254
