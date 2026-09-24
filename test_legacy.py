@@ -22,4 +22,5 @@ def test_high_loyalty_discount_percent():
 
 def test_price_with_loyalty():
     assert price_with_loyalty(100, 10) == 90
+    assert price_with_loyalty(147, 5) == 139
 
