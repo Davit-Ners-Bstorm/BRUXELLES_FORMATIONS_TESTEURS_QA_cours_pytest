@@ -182,6 +182,7 @@ order_total_dict = {
     },
 }
 
+# @pytest.mark.parametrize === même chose qu'en bas
 @m.parametrize("ticket_dict, expected, sorted_error", [
     (order_total_dict["negative_ticket"], None, r"(?i).*doit contenir"),
     (order_total_dict["no_ticket"], None, r"(?i).*au moins un"),
