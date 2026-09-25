@@ -1,4 +1,5 @@
 import pytest
+from unittest.mock import Mock
 
 def somme(a, b):
     resultat = a + b
@@ -203,3 +204,60 @@ def test_user_leslie(get_user):
 
 def test_user_leslie2(get_user):
     assert get_user_forma(get_user) == 'QA test'
+
+
+
+# Mocks
+
+def send_creation_confirm(user, email_service, confirm):
+    if confirm:
+        result = email_service.send(user["name"])
+        email_service.display()
+        return result["ok"]
+    email_service.error()
+
+
+def test_send_creation(get_user):
+    mock_email = Mock()
+    mock_email.send.return_value = {"ok": True}
+    mock_email.display.return_value = {"ok": True}
+
+    # assert send_creation_confirm(get_user, mock_email, True) is True
+
+    send_creation_confirm(get_user, mock_email, True)
+
+    mock_email.send.assert_called_once()
+    mock_email.send.assert_called_once_with("Leslie")
+    
+
+def test_send_creation_fail(get_user):
+    mock_email = Mock()
+    mock_email.send.return_value = {"ok": True}
+    mock_email.display.return_value = {"ok": True}
+    send_creation_confirm(get_user, mock_email, False)
+    
+
+    mock_email.send.assert_not_called()
+
+
+
+def test_email_error(get_user):
+    mock_email = Mock()
+    mock_email.error.side_effect = ValueError("hehe je suis une erreure")
+
+    with pytest.raises(ValueError):
+        send_creation_confirm(get_user, mock_email, False)
+
+
+def test_send_creation_mock_fixture(get_user, email_mock_service):
+
+    # assert send_creation_confirm(get_user, mock_email, True) is True
+
+    # On  peut rajouter des methodes au mocks apres fixture
+    email_mock_service.print.return_value = 'print'
+
+    send_creation_confirm(get_user, email_mock_service, True)
+
+    email_mock_service.send.assert_called_once()
+    email_mock_service.send.assert_called_once_with("Leslie")
+    assert email_mock_service.send.call_count == 5

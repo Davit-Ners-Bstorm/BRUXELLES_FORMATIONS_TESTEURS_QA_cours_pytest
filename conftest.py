@@ -6,14 +6,19 @@ fichiers auront besoin des mêmes données ou des mêmes mocks.
 Pytest découvre ce fichier automatiquement : aucune importation nécessaire.
 """
 
+from unittest.mock import Mock
+
 import pytest
 
 
 @pytest.fixture
 def get_user():
     fixture_user =  {"name": "Leslie", "formation": "QA test"}
-    yield fixture_user
-    print('Fermer connexion BD')
+    return fixture_user
+
+@pytest.fixture
+def get_confirm():
+    return {"result": True}
 
 @pytest.fixture
 def db(base_donne):
@@ -22,3 +27,12 @@ def db(base_donne):
     yield db
     print('Deconexion')
 
+
+@pytest.fixture(scope="session")
+def email_mock_service():
+    mock_email = Mock()
+    mock_email.error.side_effect = ValueError("hehe je suis une erreure")
+    mock_email.send.return_value = {"ok": True}
+    mock_email.display.return_value = {"ok": True}
+
+    return mock_email
