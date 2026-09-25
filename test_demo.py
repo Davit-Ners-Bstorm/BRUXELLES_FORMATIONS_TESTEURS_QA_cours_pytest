@@ -64,3 +64,71 @@ def function_au_pif(value):
 def test_pif_str():
     with pytest.raises(ValueError, match=ERROR_WHILE_STRING):
         function_au_pif(True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Revision 1-3
+from booking import ticket_price
+
+def test_nominal_ticket():
+    assert ticket_price('vip') == 7500
+    assert ticket_price('standard') == 3500
+    assert ticket_price('early_bird') == 2495
+
+def test_nominal_ticket_2():
+    assert ticket_price('vip') == 7500
+    assert ticket_price('standard') == 3500
+    assert ticket_price('early_bird') == 2495
+
+def test_ticket_error():
+    with pytest.raises(ValueError):
+        ticket_price("mauvais_categorie")
+
+class BrunoError(Exception):
+    pass
+
+
+def pl_type_error(value):
+    if value == 0:
+        raise ValueError("ZERO ZERO ZERO")
+    if value == 42:
+        raise ValueError("Beau nombre")
+    if value == 777:
+        raise ValueError("Bingo")
+    if type(value) == str:
+        raise TypeError("errrrrreur")
+    if value == 5:
+        raise BrunoError("BRUNOOOOOOO")
+    return True
+
+def test_type_match_0():
+    with pytest.raises(ValueError, match=r"(?i)zero"):
+        pl_type_error(0)
+
+def test_type_mauvais_type():
+    with pytest.raises(TypeError):
+        pl_type_error("hey je suis un string")
+
+def test_bruno():
+    with pytest.raises(BrunoError, match=r"(?i)bruno"):
+        pl_type_error(5)
+
+
+
+
