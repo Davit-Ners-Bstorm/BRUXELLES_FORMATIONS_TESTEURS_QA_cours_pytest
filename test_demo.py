@@ -185,3 +185,21 @@ def test_should_OVER_KILL(value, potential_match, error):
             pl_type_error(value)
     else:
         assert pl_type_error(value) == True
+
+
+
+# 5 Fixtures
+
+user = {"name": "Leslie", "formation": "QA test"}
+
+def get_user_name(user):
+    return user["name"]
+
+def get_user_forma(user):
+    return user["formation"]
+
+def test_user_leslie(get_user):
+    assert get_user_name(get_user) == 'Leslie'
+
+def test_user_leslie2(get_user):
+    assert get_user_forma(get_user) == 'QA test'
