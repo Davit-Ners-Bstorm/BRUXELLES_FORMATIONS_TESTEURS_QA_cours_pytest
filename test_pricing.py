@@ -5,7 +5,7 @@ Lancez : pytest test_pricing.py -v
 import pytest
 from pytest import raises
 from booking import MAX_TICKETS_PER_ORDER
-
+from pytest import mark as m
 from booking import ticket_price, line_total, apply_promo, order_total
 
 # À vous d'écrire les tests.
@@ -133,4 +133,66 @@ def test_order_total_ticket_negatif() :
     ]
     with raises( ValueError, match= "contenir au moins un"):
         order_total(i,None)
-        
+
+
+#Exercice 04
+@pytest.mark.parametrize("category, quantity, expected", [
+    ("vip", 1, 7500),
+    ("standard", 1, 3500),
+    ("early_bird", 3, 2495*3)
+], ids=["CAS_VIP", "CAS_STANDARD", "CAS_EARLY"])
+def test_line_total(category, quantity, expected):
+    assert line_total(category, quantity) == expected
+
+@pytest.mark.parametrize("items, expected", [
+    ([
+        {"category": "vip", "quantity": 2},
+        {"category": "standard", "quantity": 1}
+    ], 18500),
+    ([
+            {"category": "vip", "quantity": 3},
+            {"category": "early_bird", "quantity": 1}
+        ], 24995)
+])
+def test_param_order_total(items, expected):
+    assert order_total(items, None) == expected
+
+    [(1, 2)]
+
+order_total_dict = {
+    "no_ticket": {
+        "category": "vip",
+        "quantity": 0
+    },
+    "tickets_5": {
+        "category": "standard",
+        "quantity": 5
+    },
+    "negative_ticket": {
+        "category": "early_bird",
+        "quantity": -1
+    },
+    "tickets_7": {
+        "category": "vip",
+        "quantity": 7
+    },
+    "tickets_6": {
+        "category": "standard",
+        "quantity": 6
+    },
+}
+
+@m.parametrize("ticket_dict, expected, sorted_error", [
+    (order_total_dict["negative_ticket"], None, r"(?i).*doit contenir"),
+    (order_total_dict["no_ticket"], None, r"(?i).*au moins un"),
+    (order_total_dict["tickets_5"], (3500 * 5), None),
+    (order_total_dict["tickets_6"], (3500 * 6), None),
+    (order_total_dict["tickets_7"], None, r"(?i).*maximum")
+], ids=["negative ticket", "no tickets", "5 tickets", "6 tickets", "7 tickets"])
+def test_p_order_total(ticket_dict, expected, sorted_error):
+    cart = [ticket_dict]
+    if sorted_error:
+        with raises(ValueError, match=sorted_error):
+            order_total(cart)
+    else:
+        assert order_total(cart) == expected
