@@ -109,15 +109,19 @@ def check_availability(available, requested):
 def create_order(event, items, user, payment_gateway, email_service, promo=None):
     """Crée une commande : valide, calcule, encaisse, notifie.
 
-    Dépendances injectées :
-    - payment_gateway.charge(amount_cents, token) -> {"success": bool, "transaction_id": str}
-    - email_service.send(to, subject, body)
+    Args:
+        event: dict avec au moins {"id": int, "title": str, "available": int}
+        items: liste de dicts {"category": str, "quantity": int}
+        user: dict avec au moins {"email": str, "active": bool, "payment_token": str}
+        payment_gateway: objet avec .charge(amount_cents, token) -> {"success": bool, "transaction_id": str | None}
+        email_service: objet avec .send(to, subject, body)
+        promo: dict optionnel {"code": str, "percent_off": int, "active": bool, "max_uses": int, "used_count": int}
 
     Règles :
-    - utilisateur inactif                 -> ValueError (aucun paiement, aucun e-mail)
-    - stock insuffisant / quantités       -> ValueError (via check_availability / order_total)
-    - paiement refusé (success == False)  -> PaymentError, et AUCUN e-mail n'est envoyé
-    - succès                              -> e-mail de confirmation, puis dict commande
+        - utilisateur inactif                 -> ValueError (aucun paiement, aucun e-mail)
+        - stock insuffisant / quantités        -> ValueError (via check_availability / order_total)
+        - paiement refusé (success == False)   -> PaymentError, et AUCUN e-mail n'est envoyé
+        - succès                               -> e-mail de confirmation, puis dict commande
     """
     if not user.get("active", False):
         raise ValueError("Utilisateur inactif")
