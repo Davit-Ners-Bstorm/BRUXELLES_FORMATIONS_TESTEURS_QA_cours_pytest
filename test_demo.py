@@ -129,6 +129,59 @@ def test_bruno():
     with pytest.raises(BrunoError, match=r"(?i)bruno"):
         pl_type_error(5)
 
+@pytest.mark.parametrize("a, b, expected", [
+    (5, 6, 11),
+    (5, -5, 0),
+    (8, 0, 8)
+])
+def test_param_somme(a, b, expected):
+    assert somme(a, b) == expected
 
 
+# Parametrize avec message erreur
+@pytest.mark.parametrize("value, expected_match", [
+    (0, r"(?i)zero"),
+    (42, r"(?i)nombre"),
+    (777, "Bingo")
+], ids=["CAS_ZERO", "CAS_42", "BINGOOOOO"])
+def test_param_pl_type(value, expected_match):
+    with pytest.raises(ValueError, match=expected_match):
+        pl_type_error(value)
 
+# Parametrize avec levée ou pas
+@pytest.mark.parametrize("value, should_raise", [
+    (42, True),
+    (0, True),
+    (777, True),
+    (10, False),
+    (648, False),
+    (625, False)
+], ids=["CAS_42_SHOULD", "CAS_0_SHOULD", "CAS_777_SHOULD", "CAS_10_NOT", "CAS_648_NOT", "CAS_625_NOT"])
+def test_should(value, should_raise):
+    if should_raise:
+        with pytest.raises(ValueError):
+            pl_type_error(value)
+    else:
+        assert pl_type_error(value) == True
+
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!
+# !!!!!!!!ATTENTION!!!!!!!!!
+# !!!!!!!!!!!!!!!!!!!!!!!!!!
+# Voir à quel point on peut aller loin avec le parametrize, mais attention à ne pas perdre en lisibilité, il vaut mieux ne pas tout parametrer pour avoir des foncitons de tests plus lisible et facile à comprendre
+@pytest.mark.parametrize("value, potential_match, error", [
+    (42, r"(?i)nombre", ValueError),
+    (0, r"(?i)zero", ValueError),
+    (777, r"(?i)bingo", ValueError),
+    ('777', r"(?i)er+eur", TypeError),
+    (5, r"(?i)bruno", BrunoError),
+    (10, None, None),
+    (648, None, None),
+    (625, None, None)
+], ids=["CAS_42_SHOULD", "CAS_0_SHOULD", "CAS_777_SHOULD", "CAS_777_string_SHOULD", "CAS_5_SHOULD", "CAS_10_NOT", "CAS_648_NOT", "CAS_625_NOT"])
+def test_should_OVER_KILL(value, potential_match, error):
+    if error:
+        with pytest.raises(error, match=potential_match):
+            pl_type_error(value)
+    else:
+        assert pl_type_error(value) == True
