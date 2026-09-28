@@ -7,7 +7,7 @@ Pytest découvre ce fichier automatiquement : aucune importation nécessaire.
 """
 
 from unittest.mock import Mock
-
+from pytest import fixture as fixture
 import pytest
 
 
@@ -36,3 +36,90 @@ def email_mock_service():
     mock_email.display.return_value = {"ok": True}
 
     return mock_email
+
+
+@fixture
+def no_ticket_item_dict():
+    return [
+        {
+        "category": "vip",
+        "quantity": 0
+        }
+    ]
+
+@fixture
+def ticket5_item_dict():
+    return [
+        {
+        "category": "standard",
+        "quantity": 5
+        }
+    ]
+
+
+@fixture
+def ticket6_item_dict():
+    return [
+        {
+            "category": "early_bird",
+            "quantity": 6
+        }
+    ]
+
+
+@fixture
+def over_ticket_item_dict():
+    return [
+        {
+            "category": "vip",
+        "quantity": 7
+        }
+    ]
+
+
+@fixture
+def active_user_dict():
+    return {
+        "active": True,
+        "email": "raph@eventflow.com",
+        "payment_token": "magielol156"
+    }
+
+@fixture
+def inactive_user_dict():
+    return {
+        "active": False,
+        "email": "sign@eventflow.com",
+        "payment_token": "ftg5541"
+    }
+
+
+@fixture
+def event1_dict():
+    return {
+        "available": 6
+    }
+
+
+@fixture
+def event2_dict():
+    return {
+        "available": 2
+    }
+
+
+@fixture
+def event3_dict():
+    return {
+        "available": 6
+    }
+
+
+@fixture
+def yield_example():
+    print("Test before yield")
+
+    yield
+
+    print("Test after yield")
+
